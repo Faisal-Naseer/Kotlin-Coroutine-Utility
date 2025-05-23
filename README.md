@@ -32,6 +32,11 @@ val configs = listOf<SafeJobConfig<Unit>>(
         block = { /* Your job logic */ },
         timeoutMillis = 5000,
         maxRetries = 3
+    ),
+    SafeJobConfig(
+        block = { /* Your job logic */ },
+        timeoutMillis = 10000,
+        maxRetries = 3
     )
 )
 
@@ -49,28 +54,47 @@ jobs.awaitAll()
 ### Running Sequential Jobs
 ```kotlin
 val configs = listOf(
-    SafeJobConfigSequential(
-        block = { input -> /* Process input */ },
+    SafeJobConfigSequential<Any?, String>(
+        block = { 
+            "input to next block"
+        },
         timeoutMillis = 5000,
         maxRetries = 3
+    ),
+    SafeJobConfigSequential<String, String>(
+        block = { inputFromPreviousBlock ->
+            println(inputFromPreviousBlock)
+        }
     )
 )
 
 // Run sequential jobs
-val result = runSequentialJobs(
+val result = runSequentialJobs<String>(
     configs = configs,
     errorHandler = { println("Error: ${it.message}") }
 )
 
 // Handle result
-result.fold(
-    onSuccess = { println("Success: $it") },
-    onFailure = { println("Failed: ${it.message}") }
-)
+println(result.getOrElse { "Failed: ${it.message}" })
 ```
 
 ### Running Grouped Jobs
 ```kotlin
+val configs = listOf<SafeJobConfig<String>>(
+    SafeJobConfig(
+        block = { 
+            "executed block 1"
+        },
+        maxRetries = 3
+    ),
+    SafeJobConfig(
+        block = {
+             "executed block 2"
+        }
+    )
+)
+
+
 val (results, errors) = runGroupedJobs(
     configs = configs,
     parallelism = 2,
