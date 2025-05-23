@@ -27,7 +27,7 @@ A powerful utility library for handling concurrent and sequential coroutine oper
 
 ### Running Concurrent Jobs
 ```kotlin
-val configs = listOf(
+val configs = listOf<SafeJobConfig<Unit>>(
     SafeJobConfig(
         block = { /* Your job logic */ },
         timeoutMillis = 5000,
