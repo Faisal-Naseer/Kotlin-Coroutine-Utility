@@ -25,7 +25,7 @@ fun main() = runBlocking {
     //***Sequential tests***
 
     //runSequentialJobsDeferredTest()
-    //runWeatherSequentialJob()
+    runWeatherSequentialJob()
 }
 
 
